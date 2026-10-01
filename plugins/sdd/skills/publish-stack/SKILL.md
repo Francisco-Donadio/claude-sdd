@@ -7,7 +7,9 @@ disable-model-invocation: true
 ---
 
 Publish a stack that `/sdd:run` already built as local branches and commits. Run
-it from inside the repo the stack belongs to.
+it from inside the repo the stack belongs to. Read the `## SDD config` section
+of the repo's `CLAUDE.md` (and the workspace root's) for `PR base branch` and
+`On PR open`. See the plugin's `CONFIGURING.md`.
 
 User input (optional): $ARGUMENTS
 
@@ -39,9 +41,9 @@ User input (optional): $ARGUMENTS
 5. **Cross-link.** Once all PRs exist, `gh pr edit` each body to add a
    `### Stack` list of every PR in order, marking the current one (`👉`). Replace
    an existing `### Stack` section rather than appending a second one.
-6. **Ticket status.** If the repo's `CLAUDE.md` defines a step for when a PR
-   opens (e.g. moving a ticket to "In review"), do it **once** for the stack,
-   not once per PR.
+6. **Ticket status.** If the config defines `On PR open` (e.g. move the ticket
+   to "In review"), do it **once** for the stack, not once per PR. If the
+   tracker connection isn't available, say so and skip it.
 7. **Report.** Print the ordered PR URLs and remind the user to merge
    **bottom-up**. After a slice is squash-merged, the next branch still carries
    the merged commits. Fix it with

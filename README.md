@@ -5,7 +5,7 @@ A Claude Code plugin. Install it, then run `/sdd:run <feature>`.
 ## Install
 
 ```
-/plugin marketplace add Francisco-Donadio/claude-sdd
+/plugin marketplace add Francisco-Donadio/sdd
 /plugin install sdd@claude-sdd
 ```
 
@@ -16,7 +16,7 @@ and looking for `/sdd:run`.
 Auto-update is off by default for this marketplace. You can turn it on in
 `/plugin` → **Marketplaces**.
 
-**Pin a version:** `/plugin marketplace add Francisco-Donadio/claude-sdd#sdd--v1.0.0`.
+**Pin a version:** `/plugin marketplace add Francisco-Donadio/sdd#sdd--v1.1.0`.
 
 **Migrating from the copied-files setup?** Remove the old copies from
 `~/.claude/agents/` (the ten agents + `PRINCIPLES.md`) and
@@ -67,6 +67,14 @@ always-active protocol, not inside the agents.)
 
 ```
 /sdd:run add a CSV export button to the report page
+```
+
+Or pass a ticket link or key. The pipeline pulls the ticket (Jira, Notion,
+Linear or GitHub Issues, through whichever connection you have) and builds the
+spec from it:
+
+```
+/sdd:run https://yourcompany.atlassian.net/browse/PROJ-123
 ```
 
 This runs the whole pipeline with approval checkpoints after the **spec**, after
@@ -193,7 +201,8 @@ artifacts for a run stay in one place regardless of which repo the change touche
 
 | File | Author |
 | --- | --- |
-| `request.md` | orchestrator |
+| `request.md` | orchestrator (the request, or the fetched ticket) |
+| `config.md` | orchestrator (resolved `## SDD config` values) |
 | `memory.md` | orchestrator (Engram recall) |
 | `exploration.md` | explorer |
 | `spec.md` | spec-writer |
@@ -208,7 +217,7 @@ artifacts for a run stay in one place regardless of which repo the change touche
 | `archive/<slug>.md` | archivist |
 
 **At a successful closeout the orchestrator** cleans up scratch: deletes
-`request.md`, `memory.md`, `exploration.md`, `tasks.md`, `tests.md`,
+`request.md`, `config.md`, `memory.md`, `exploration.md`, `tasks.md`, `tests.md`,
 `implementation.md`, `review.md`, `verification.md`. It **keeps** `spec.md`, `architecture.md`,
 `design.md`, `stack.md` (if any, since `/sdd:publish-stack` needs it), and
 `archive/<slug>.md` (self-contained record). If a run FAILS or is
@@ -234,16 +243,23 @@ Consider adding `.agent-work/` to `.gitignore` if you don't want artifacts commi
 | verifier | sonnet | independent PASS/FAIL gate with evidence |
 | archivist | haiku | durable closeout record |
 
-## Project conventions
+## Configure your project
 
-The plugin carries no project-specific stack knowledge. Each agent discovers the
-current repo's stack, structure, and conventions from its own `CLAUDE.md` /
-`AGENTS.md` / `README` / manifests and existing code. Team-specific rules belong
-in the repo's `CLAUDE.md`, for example:
+The plugin carries no project-specific knowledge. Agents discover the stack and
+conventions from the repo's own `CLAUDE.md` / `README` / manifests and code.
+Conventions it can't guess (PR base branch, branch naming, tracker, ticket
+status steps, test commands, sensitive paths) go in an `## SDD config` section
+of the project's `CLAUDE.md`:
 
-- the PR base branch (e.g. `staging`); otherwise the default branch is used;
-- a branch-naming rule (e.g. ticket-id prefix);
-- what to do when a PR opens (e.g. move the ticket to "In review").
+```markdown
+## SDD config
+- Tracker: jira
+- PR base branch: develop
+- On PR open: move the Jira issue to "In Review"
+```
+
+**See [`plugins/sdd/CONFIGURING.md`](plugins/sdd/CONFIGURING.md)** for every
+key, the defaults, and examples for Jira, Notion, GitHub Issues and no tracker.
 
 **Optional: Engram memory.** If the Engram MCP is connected, the orchestrator
 recalls prior decisions before stage 1. Without it the pipeline runs normally.

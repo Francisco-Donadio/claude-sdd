@@ -1,9 +1,9 @@
 {
   "name": "sdd",
   "displayName": "SDD → TDD pipeline",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Spec-Driven → Test-Driven development pipeline: an orchestrator skill plus ten specialized agents, with tiered review and stacked PRs for big tickets.",
   "author": { "name": "Francisco Donadio" },
-  "repository": "https://github.com/Francisco-Donadio/claude-sdd",
+  "repository": "https://github.com/Francisco-Donadio/sdd",
   "keywords": ["sdd", "tdd", "agents", "pipeline", "stacked-prs"]
 }
