@@ -5,7 +5,7 @@ A Claude Code plugin. Install it, then run `/sdd:run <feature>`.
 ## Install
 
 ```
-/plugin marketplace add Francisco-Donadio/sdd
+/plugin marketplace add Francisco-Donadio/claude-sdd
 /plugin install sdd@claude-sdd
 ```
 
@@ -16,7 +16,7 @@ and looking for `/sdd:run`.
 Auto-update is off by default for this marketplace. You can turn it on in
 `/plugin` → **Marketplaces**.
 
-**Pin a version:** `/plugin marketplace add Francisco-Donadio/sdd#sdd--v1.1.0`.
+**Pin a version:** `/plugin marketplace add Francisco-Donadio/claude-sdd#sdd--v1.1.0`.
 
 **Migrating from the copied-files setup?** Remove the old copies from
 `~/.claude/agents/` (the ten agents + `PRINCIPLES.md`) and
