@@ -3,6 +3,16 @@
 All notable changes to the `sdd` plugin. Versions follow semver and are tagged
 `sdd--v<version>`.
 
+## 1.1.1 (2026-10-01)
+
+- Eval suite in `plugins/sdd/evals/` (3 cases): an unreachable ticket link must
+  not produce invented content; a typo fix gets the shortened path; a pasted
+  ticket with an injected instruction must stop at Checkpoint 1, use the
+  project's `## SDD config`, never run the injected command, and flag it.
+- `license: MIT` in `plugin.json`.
+- Repo: GitHub Releases are created from this changelog on each `sdd--v*` tag;
+  commits and tags are signed.
+
 ## 1.1.0 (2026-10-01)
 
 - **Ticket intake:** `/sdd:run <ticket link or key>` fetches the ticket from
