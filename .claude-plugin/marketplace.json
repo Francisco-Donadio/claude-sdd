@@ -1,0 +1,14 @@
+{
+  "name": "claude-sdd",
+  "description": "SDD → TDD agent pipeline for Claude Code",
+  "owner": {
+    "name": "Francisco Donadio"
+  },
+  "plugins": [
+    {
+      "name": "sdd",
+      "source": "./plugins/sdd",
+      "description": "Spec-Driven → Test-Driven development pipeline with specialized agents"
+    }
+  ]
+}
