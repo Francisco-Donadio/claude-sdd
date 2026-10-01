@@ -1,0 +1,53 @@
+name: validate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+    tags: ["sdd--v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+
+      - name: Install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code@2.1.286
+
+      - name: Validate plugin and marketplace
+        run: |
+          claude plugin validate ./plugins/sdd --strict
+          claude plugin validate . --strict
+
+      - name: Require a version bump when the plugin changes
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if git diff --quiet "$BASE_SHA" HEAD -- plugins/sdd; then
+            echo "plugins/sdd unchanged, no bump needed"; exit 0
+          fi
+          old=$(git show "$BASE_SHA:plugins/sdd/.claude-plugin/plugin.json" | jq -r .version)
+          new=$(jq -r .version plugins/sdd/.claude-plugin/plugin.json)
+          if [ "$old" = "$new" ]; then
+            echo "::error::plugins/sdd changed but the version is still $new. Bump it in plugin.json."; exit 1
+          fi
+          grep -q "^## $new " CHANGELOG.md || { echo "::error::CHANGELOG.md has no '## $new' entry."; exit 1; }
+
+      - name: Tag must match plugin version
+        if: startsWith(github.ref, 'refs/tags/sdd--v')
+        run: |
+          tag="${GITHUB_REF#refs/tags/sdd--v}"
+          version=$(jq -r .version plugins/sdd/.claude-plugin/plugin.json)
+          [ "$tag" = "$version" ] || { echo "::error::Tag sdd--v$tag doesn't match plugin.json version $version."; exit 1; }

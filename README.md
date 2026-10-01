@@ -18,6 +18,11 @@ Auto-update is off by default for this marketplace. You can turn it on in
 
 **Pin a version:** `/plugin marketplace add Francisco-Donadio/claude-sdd#sdd--v1.1.0`.
 
+**Security.** A plugin's skills and agents run with your permissions, so
+review what changed before updating: read `CHANGELOG.md` and the diff between
+tags. Pinning a tag (above) means you only get changes when you choose to.
+Report vulnerabilities privately; see [`SECURITY.md`](SECURITY.md).
+
 **Migrating from the copied-files setup?** Remove the old copies from
 `~/.claude/agents/` (the ten agents + `PRINCIPLES.md`) and
 `~/.claude/commands/sdd.md`. Otherwise you'll have both `architect` and
@@ -284,7 +289,12 @@ recalls prior decisions before stage 1. Without it the pipeline runs normally.
 2. Bump `version` in `plugins/sdd/.claude-plugin/plugin.json` (semver: patch for
    wording fixes, minor for new options, major for changed flags or behavior).
 3. Add an entry to `CHANGELOG.md`.
-4. Commit, tag `sdd--v<version>`, push the tag: `git tag sdd--v1.1.0 && git push --tags`.
+4. Commit and push. CI (`.github/workflows/validate.yml`) validates the plugin
+   and fails a PR that changes `plugins/sdd/` without a version bump and a
+   matching changelog entry.
+5. Tag `sdd--v<version>` and push the tag: `git tag sdd--v1.1.0 && git push --tags`.
+   CI checks that the tag matches `plugin.json`. Release tags are protected:
+   they can't be moved or deleted once pushed.
 
 Users get it on their next `/plugin marketplace update claude-sdd`. The
 `version` field is what tells Claude Code there's an update, so a change without
